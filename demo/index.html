@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarouselImg</title>
+  <meta name="description" content="轮播图组件" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+    .carousel-wrap {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+    }
+    .img-input {
+      margin-top: 20px;
+      border: 1px solid #999;
+      height: 20px;
+      width: 300px;
+      outline: none;
+    }
+    .add-img {
+      margin-top: 20px;
+      width: 90px;
+      height: 40px;
+      background-color: green;
+      display: inline-block;
+      outline: none;
+      color: #fff;
+      border: transparent;
+    }
+  </style>
+  <div class="carousel-wrap" id="j_carouselWrap">
+    <div class="img-box">
+      <img class="carousel-img" src="http://img0.imgtn.bdimg.com/it/u=2125288902,1890865968&fm=26&gp=0.jpg">
+      <img class="carousel-img" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2520433466,1070276963&fm=26&gp=0.jpg">
+      <img class="carousel-img" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2520433466,1070276963&fm=26&gp=0.jpg">
+      <img class="carousel-img" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2520433466,1070276963&fm=26&gp=0.jpg">
+      <img class="carousel-img" src="http://img2.imgtn.bdimg.com/it/u=415472049,3360294245&fm=26&gp=0.jpg">
+    </div>
+    <ul class="indicator-list"></ul>
+  </div>
+  <input class="img-input" id="j_imgInput" type="text" value="http://img3.imgtn.bdimg.com/it/u=197585957,1738624894&fm=26&gp=0.jpg" placeholder="请输入添加的图片url">
+  <button class="add-img" id="j_addImg">添加图片</button>
+</head>
+<body>
+</body>
+</html>
