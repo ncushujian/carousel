@@ -1,6 +1,3 @@
----
-title: carousel-img 组件
----
 # carousel-img
 图片轮播组件
 
