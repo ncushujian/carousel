@@ -1,21 +1,41 @@
-import carousel from '../dist/carousel';
+import carousel from '../dist/carousel-img';
 
-var dom = document.getElementById('j_carouselWrap');
-var boxDom = document.getElementsByClassName('img-box')[0];
+// 第一个轮播图实例
+var dom1 = document.getElementById('j_carouselWrap1');
+var imgBox1 = document.getElementById('j_imgBox1');
+var inputImgDom1 = document.getElementById('j_imgInput1');
+var carousel1 = new carousel({ autoPlay: false });
 
-var addImgDom = document.getElementById('j_addImg');
-var inputImgDom = document.getElementById('j_imgInput');
+carousel1.init(dom1);
 
-carousel.init(dom);
-
-function addImg (src) {
+var addImgDom1 = document.getElementById('j_addImg1');
+addImgDom1.addEventListener('click', function () {
+  var sliderDom = document.createElement('div');
+  sliderDom.className = 'carousel-slider';
   var imgDom = document.createElement('img');
   imgDom.className = 'carousel-img';
-  imgDom.src = src;
-  boxDom.appendChild(imgDom);
-  carousel.init(dom);
-}
+  imgDom.src = inputImgDom1.value;
+  sliderDom.appendChild(imgDom);
+  imgBox1.appendChild(sliderDom);
+  carousel1.init(dom1);
+});
 
-addImgDom.addEventListener('click', function () {
-  addImg(inputImgDom.value);
+// 第二个轮播图实例
+var dom2 = document.getElementById('j_carouselWrap2');
+var imgBox2 = document.getElementById('j_imgBox2');
+var inputImgDom2 = document.getElementById('j_imgInput2');
+var carousel2 = new carousel({ delay: 1500, autoPlay: true });
+
+carousel2.init(dom2);
+
+var addImgDom2 = document.getElementById('j_addImg2');
+addImgDom2.addEventListener('click', function () {
+  var sliderDom = document.createElement('div');
+  sliderDom.className = 'carousel-slider';
+  var imgDom = document.createElement('img');
+  imgDom.className = 'carousel-img';
+  imgDom.src = inputImgDom2.value;
+  sliderDom.appendChild(imgDom);
+  imgBox2.appendChild(sliderDom);
+  carousel2.init(dom2);
 });

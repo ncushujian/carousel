@@ -3,6 +3,11 @@
   white-space: nowrap; 
 }
 
+.img-box .duplicate-slider, .img-box .carousel-slider {
+  display: inline-block;
+  width: 100%;
+}
+
 .img-box .carousel-img, .img-box .duplicate-img {
   width: 100%;
 }
