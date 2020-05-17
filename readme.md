@@ -1,4 +1,4 @@
-# carousel-img
+# carousel
 图片轮播组件
 
 **注意**  
@@ -110,6 +110,9 @@ export default {
 -|-|-|-|-|
 autoPlay | Boolean | true | 否 | 是否开启自动轮播
 delay | Number | 3500 | 否 | 轮播图轮播间隔时间
+width | Number | 无 | 否 | 图片轮播组件容器宽度
+showIndicator | Boolean | true | 否 | 是否展示轮播图指示器
+sliderChange | Function | 无 | 否 | 轮播图切换触发执行的回调函数，返回当前轮播图的索引值
 
 ### carousel.init(dom)
 > 初始化Carousel
@@ -117,3 +120,7 @@ delay | Number | 3500 | 否 | 轮播图轮播间隔时间
 参数 | 类型 | 默认值 | 是否必填 | 说明  
 -|-|-|-|-|
 dom | Object | 无 | 是 | 图片轮播组件容器DOM节点
+
+## [查看demo](https://ncushujian.github.io/carousel/demo/dist/test.html)
+* 将浏览器调整为手机模式后，刷新浏览器后体验，因为此组件没有监听窗口 onresize 事件
+* 有问题反馈，请发起issue，或者联系本人WeChat: StreamLights

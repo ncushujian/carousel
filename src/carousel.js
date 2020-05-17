@@ -1,32 +1,3 @@
-function __$styleInject(css, ref) {
-  if ( ref === void 0 ) ref = {};
-  var insertAt = ref.insertAt;
-
-  if (!css || typeof document === 'undefined') { return; }
-
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-
-  if (insertAt === 'top') {
-    if (head.firstChild) {
-      head.insertBefore(style, head.firstChild);
-    } else {
-      head.appendChild(style);
-    }
-  } else {
-    head.appendChild(style);
-  }
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-__$styleInject(".img-box {\n  font-size: 0;\n  white-space: nowrap; \n}\n\n.img-box .duplicate-slider, .img-box .carousel-slider {\n  display: inline-block;\n  width: 100%;\n}\n\n.img-box .carousel-img, .img-box .duplicate-img {\n  width: 100%;\n}\n\n.indicator-list {\n  margin: 0;\n  padding: 0;\n  position: absolute;\n  left: 50%;\n  bottom: 20px;\n  transform: translateX(-50%);\n}\n\n.indicator-item {\n  display: inline-block;\n  margin: 0 3px;\n  width: 10px;\n  height: 3px;\n  background-color: rgba(255, 255, 255, .6);\n}\n\n.indicator-item.active {\n  background-color: #fde23d;\n}", {});
-
 /**
  * carousel-img.js 图片轮播组件初始化触摸滚动、自动轮播和轮播指示器
  * 
@@ -40,6 +11,19 @@ __$styleInject(".img-box {\n  font-size: 0;\n  white-space: nowrap; \n}\n\n.img-
  * var carousel = new Carousel({ autoPlay: true, delay: 3000 });
  * carousel.init(dom);
  */
+
+import './carousel.css'
+
+var listenerParam = false;
+try {
+  var opts = Object.defineProperty({}, 'passive', {
+    get: function () {
+      listenerParam = { passive: true };
+      return true;
+    }
+  });
+  addEventListener('test', null, opts);
+} catch (e) {}
 
 function CarouselImg (opt) {
   this.opt = opt ? opt : {};
@@ -55,6 +39,7 @@ function CarouselImg (opt) {
   this.firstInit = true;
 
   this.opt.autoPlay === undefined && (this.opt.autoPlay = true);
+  this.opt.showIndicator === undefined && (this.opt.showIndicator = true);
 }
 
 /**
@@ -67,7 +52,7 @@ CarouselImg.prototype.autoPlay = function () {
   this.timer = setInterval(function () {
     _this.change(1);
   }, this.opt.delay || 3500);
-};
+}
 
 /**
  * @name createDuplicateSlider 生成轮播占位重复Slider，用来实现循环播放
@@ -87,7 +72,7 @@ CarouselImg.prototype.createDuplicateSlider = function (dom) {
 
   sliderDom.appendChild(imgDom);
   return sliderDom;
-};
+}
 
 /**
  * @name transform 图片列表容器水平滑动一段距离
@@ -97,7 +82,7 @@ CarouselImg.prototype.createDuplicateSlider = function (dom) {
 CarouselImg.prototype.transform = function (translate) {
   this.imgBoxDom.style.webkitTransform = 'translate3d(' + translate + 'px, 0, 0)';
   this.stopPos = translate;
-};
+}
 
 /**
  * @name change 切换当前可视区显示的图片
@@ -107,29 +92,33 @@ CarouselImg.prototype.transform = function (translate) {
 CarouselImg.prototype.change = function (step) {
   var _this = this;
   this.updateIndicator(step);
-  this.imgBoxDom.style.transition = '0.3s ease transform';
+  this.imgBoxDom.style.transitionDuration = '0.3s';
   this.curImgIndex += step;
+  this.opt.sliderChange && this.opt.sliderChange(this.getIndicatorIndex(this.curImgIndex));
   this.transform(-this.curImgIndex * this.w);
-  setTimeout(function () {
-    _this.loop();
-  }, 300);
-};
+  // 自动轮播定时器是否存在，如果存在说明当前处于自动轮播状态
+  if (_this.timer) {
+    setTimeout(function () {
+      _this.loop();
+    }, 300);
+  }
+}
 
 /**
  * @name loop 执行此方法，当 curImgIndex 等于占位图的索引时，瞬间切换到与占位图对应的真正的图片
  * @function
  */
 CarouselImg.prototype.loop = function () {
-  this.imgBoxDom.style.transition = '0s ease transform';
-  if (this.curImgIndex === this.sliderLen + 1) {
+  this.imgBoxDom.style.transitionDuration = '0s';
+  if (this.curImgIndex >= this.sliderLen + 1) {
     this.transform(-this.w);
     this.curImgIndex = 1;
   }
-  if (this.curImgIndex === 0) {
+  if (this.curImgIndex <= 0) {
     this.transform(-this.w * this.sliderLen);
     this.curImgIndex = this.sliderLen;
   }
-};
+}
 
 /**
  * @name initCarousel 初始化轮播图手指触摸滚动
@@ -149,14 +138,16 @@ CarouselImg.prototype.initCarousel = function () {
     startT = new Date().getTime();
     // 清除自动轮播定时器
     clearInterval(_this.timer);
-  });
+    _this.timer = null;
+  }, listenerParam);
 
   dom.addEventListener('touchmove', function (e) {
+    // 阻止浏览器默认事件，目的是为了 提升在 chrome33 内核 touchmove 事件的触发频次
     e.preventDefault();
     var distance = e.touches[0].pageX - startX;
     var translate = _this.startPos + distance;
     _this.transform(translate);
-  });
+  }, listenerParam);
 
   dom.addEventListener('touchend', function () {
     var distance = _this.stopPos - _this.startPos;
@@ -172,9 +163,9 @@ CarouselImg.prototype.initCarousel = function () {
       // 停留在当前页面，不做切换
       _this.change(0);
     }
-    if(_this.opt.autoPlay) _this.autoPlay();
-  });
-};
+    _this.opt.autoPlay && _this.autoPlay();
+  }, listenerParam);
+}
 
 /**
  * @name createIndicator 生成指示器dom节点
@@ -187,7 +178,7 @@ CarouselImg.prototype.createIndicator = function () {
     indicatorTpl += '<li class="indicator-item ' + (i === this.getIndicatorIndex(this.curImgIndex) ? 'active' : '') + '"></li>';
   }
   indicatorDom.innerHTML = indicatorTpl;
-};
+}
 
 /**
  * @name getIndicatorIndex
@@ -196,10 +187,17 @@ CarouselImg.prototype.createIndicator = function () {
  * @return {number} 指示器的索引值
  */
 CarouselImg.prototype.getIndicatorIndex = function (i) {
-  var indicator = i === 0 ? this.sliderLen :
-    i > this.sliderLen ? 1 : i;
-  return indicator - 1;
-};
+  var indicator = 0;
+  // 当前在可视区的图片索引为首张占位图
+  if (i === 0) {
+    indicator = this.sliderLen - 1;
+  }
+  // 当前在可视区的图片索引为轮播图
+  if (i > 0 && i <= this.sliderLen) {
+    indicator = i - 1;
+  }
+  return indicator;
+}
 
 /**
  * @name updateIndicator 更新指示器
@@ -207,10 +205,11 @@ CarouselImg.prototype.getIndicatorIndex = function (i) {
  * @param {number} step step = 1 表示轮播图向左滑动一张图片的距离， step = -1 表示轮播图向右滑动一张图片的距离
  */
 CarouselImg.prototype.updateIndicator = function (step) {
+  if (!this.opt.showIndicator) return;
   if (!this.indicatorItemDom) this.indicatorItemDom = this.wrapDom.getElementsByClassName('indicator-item');
   this.indicatorItemDom[this.getIndicatorIndex(this.curImgIndex)].classList.remove('active');
   this.indicatorItemDom[this.getIndicatorIndex(this.curImgIndex + step)].classList.add('active');
-};
+}
 
 /**
  * @name init 初始化轮播图组件
@@ -223,6 +222,8 @@ CarouselImg.prototype.init = function (dom) {
   this.imgBoxDom = this.wrapDom.getElementsByClassName('img-box')[0];
   // 图片轮播组件宽度
   this.w = this.opt.width || this.wrapDom.clientWidth;
+
+  this.wrapDom.style.width = this.w + 'px';
 
   var sliderDom = this.wrapDom.getElementsByClassName('carousel-slider');
   this.sliderLen = sliderDom.length;
@@ -252,9 +253,9 @@ CarouselImg.prototype.init = function (dom) {
   this.imgBoxDom.style.webkitTransform = 'translate3d(-' + ( this.w * this.curImgIndex ) + 'px, 0, 0)';
 
   // 生成指示器
-  this.createIndicator();
+  this.opt.showIndicator && this.createIndicator();
 
-  if(this.opt.autoPlay) this.autoPlay();
-};
+  this.opt.autoPlay && this.autoPlay();
+}
 
 export default CarouselImg;
