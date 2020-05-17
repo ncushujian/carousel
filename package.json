@@ -1,6 +1,6 @@
 {
   "name": "qt-carousel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "图片轮播组件",
   "main": "dist/carousel.js",
   "scripts": {

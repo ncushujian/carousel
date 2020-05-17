@@ -143,7 +143,7 @@ CarouselImg.prototype.initCarousel = function () {
 
   dom.addEventListener('touchmove', function (e) {
     // 阻止浏览器默认事件，目的是为了 提升在 chrome33 内核 touchmove 事件的触发频次
-    e.preventDefault();
+    // e.preventDefault();
     var distance = e.touches[0].pageX - startX;
     var translate = _this.startPos + distance;
     _this.transform(translate);
